@@ -2,6 +2,7 @@ import logging
 import os
 
 import pytest
+import pytest_html
 from pytest import fixture
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -95,3 +96,28 @@ def one_time_setup(prep_properties, request, browser):
 	logger.info("Closing browser......")
 	driver.quit()
 
+
+# Hook to attach screenshots to HTML report on failure
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+	# Execute all other hooks to obtain the report object
+	outcome = yield
+	rep = outcome.get_result()
+	
+	# Only act on test failure
+	if rep.when == "call" and rep.failed:
+		driver = item.funcargs.get("driver")  # get the driver fixture
+		if driver:
+			# Ensure the screenshot folder exists
+			screenshot_folder = "screenshots"
+			os.makedirs(screenshot_folder, exist_ok=True)
+			
+			# Save the screenshot
+			screenshot_path = f"{screenshot_folder}/{item.name}.png"
+			driver.save_screenshot(screenshot_path)
+			
+			# Attach the screenshot to the HTML report
+			if hasattr(item.config, "_html"):
+				extra = getattr(rep, "extra", [])
+				extra.append(pytest_html.extras.image(screenshot_path))
+				rep.extra = extra
