@@ -16,6 +16,11 @@ class TestUI(BaseTest):
 
     @pytest.mark.testui
     def test_first(self):
-
         self.google_page = GooglePage(self.driver)
         self.google_page.search_text("manish")
+
+    @pytest.mark.testB
+    def test_second(self):
+        self.google_page = GooglePage(self.driver)
+        self.google_page.search_text("Indira")
+        assert False

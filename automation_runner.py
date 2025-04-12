@@ -1,7 +1,7 @@
 import sys
 import pytest
 
-tags = "testui"
+tags = "testB"
 
 if __name__ == '__main__':
     sys.exit(pytest.main(["-m", tags,
