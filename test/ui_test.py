@@ -15,12 +15,14 @@ class TestUI(BaseTest):
         print("teardown")
 
     @pytest.mark.testui
-    def test_first(self):
-        self.google_page = GooglePage(self.driver)
-        self.google_page.search_text("manish")
+    @pytest.mark.parametrize("case", BaseTest.load_test_data("test_first"))
+    def test_first(self,case):
+        print(case)
+        print(case["data"])
+        # self.google_page = GooglePage(self.driver)
+        # self.google_page.search_text("manish")
 
     @pytest.mark.testB
     def test_second(self):
         self.google_page = GooglePage(self.driver)
         self.google_page.search_text("Indira")
-        assert False

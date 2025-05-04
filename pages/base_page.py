@@ -2,7 +2,8 @@ import logging
 from typing import Tuple, Union
 
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver import ActionChains, Chrome, Edge, Firefox, Keys
+from selenium.webdriver import ActionChains, Chrome, Edge, Firefox
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.expected_conditions import (

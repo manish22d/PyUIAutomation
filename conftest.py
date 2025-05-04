@@ -7,8 +7,9 @@ from pytest import fixture
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
-
+from pytest_metadata.plugin import metadata_key
 from utils.config_parser import ConfigParserIni
+from msedge.selenium_tools import EdgeOptions
 
 os.environ['SE_CACHE_PATH'] = './driver'
 os.makedirs("screenshots", exist_ok=True)
@@ -21,6 +22,16 @@ def pytest_addoption(parser):
 
 def pytest_html_report_title(report):
 	report.title = "UI Python Automation !!"
+
+
+def pytest_configure(config):
+	config.stash[metadata_key] = {}
+	config_reader = ConfigParserIni("props.ini")
+	base_url = config_reader.config_section_dict("Base Url")["base_url"]
+	browser = config_reader.config_section_dict("Base Url")["browser"]
+	config.stash[metadata_key]["Attributes"] = "Value"
+	config.stash[metadata_key]["Application URL"] = base_url
+	config.stash[metadata_key]["browser"] = browser
 
 
 def pytest_sessionstart() -> None:
@@ -84,6 +95,14 @@ def one_time_setup(prep_properties, request, browser):
 		chrome_options.add_argument("disable-notifications")
 		
 		driver = webdriver.Chrome(options=chrome_options)
+	elif browser in "edge":
+		options = EdgeOptions()
+		options.use_chromium = True
+		options.add_argument("--no-sandbox")
+		options.add_argument("--start-maximized")
+		service = Service(EdgeChromiumDriverManager().install())
+		
+		driver = webdriver.Edge(service=service, options=options)
 	else:
 		driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
 	
